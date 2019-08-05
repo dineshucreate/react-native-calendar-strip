@@ -273,7 +273,6 @@ class CalendarStrip extends Component {
     const previousWeekStartDate = this.state.startingDate
       .clone()
       .subtract(this.props.numDaysInWeek, "d");
-    console.log(previousWeekStartDate);
     // if (this.props.onWeekChanged) {
     //   if (this.props.useIsoWeekday) {
     //     this.props.onWeekChanged(
@@ -290,7 +289,6 @@ class CalendarStrip extends Component {
   //Set startingDate to the next week
   getNextWeek() {
     const nextWeekStartDate = this.state.startingDate.clone().add(this.props.numDaysInWeek, "d");
-    console.log(nextWeekStartDate);
     // if (this.props.onWeekChanged) {
     //   if (this.props.useIsoWeekday) {
     //     this.props.onWeekChanged(nextWeekStartDate.clone().startOf("isoweek"));
@@ -348,7 +346,6 @@ class CalendarStrip extends Component {
       datesAllowedForWeek.push(this.isDateAllowed(date, props));
       datesSelectedForWeek.push(this.isDateSelected(date, selectedDate));
       datesCustomStylesForWeek.push(this.getCustomDateStyle(date, props));
-      console.log(date)
     }
     return {
       datesForWeek,
