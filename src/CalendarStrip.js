@@ -79,7 +79,9 @@ class CalendarStrip extends Component {
     styleWeekend: PropTypes.bool,
 
     locale: PropTypes.object,
-    shouldAllowFontScaling: PropTypes.bool
+    shouldAllowFontScaling: PropTypes.bool,
+
+    numDaysInWeek: PropTypes.number,
   };
 
   static defaultProps = {
@@ -101,11 +103,11 @@ class CalendarStrip extends Component {
     minDayComponentSize: 10,
     shouldAllowFontScaling: true,
     markedDates: [],
+    numDaysInWeek: 7,
   };
 
   constructor(props) {
     super(props);
-    this.numDaysInWeek = 7;
 
     if (props.locale) {
       if (props.locale.name && props.locale.config) {
@@ -194,9 +196,9 @@ class CalendarStrip extends Component {
       (JSON.stringify(prevProps.datesBlacklist) !==
         JSON.stringify(this.props.datesBlacklist) ||
         JSON.stringify(prevProps.datesWhitelist) !==
-          JSON.stringify(this.props.datesWhitelist) ||
+        JSON.stringify(this.props.datesWhitelist) ||
         JSON.stringify(prevProps.customDatesStyles) !==
-          JSON.stringify(this.props.customDatesStyles))
+        JSON.stringify(this.props.customDatesStyles))
     ) {
       updateState = true;
       // No need to update week start here
@@ -270,30 +272,32 @@ class CalendarStrip extends Component {
   getPreviousWeek() {
     const previousWeekStartDate = this.state.startingDate
       .clone()
-      .subtract(1, "w");
-    if (this.props.onWeekChanged) {
-      if (this.props.useIsoWeekday) {
-        this.props.onWeekChanged(
-          previousWeekStartDate.clone().startOf("isoweek")
-        );
-      } else {
-        this.props.onWeekChanged(previousWeekStartDate.clone());
-      }
-    }
+      .subtract(this.props.numDaysInWeek, "d");
+    console.log(previousWeekStartDate);
+    // if (this.props.onWeekChanged) {
+    //   if (this.props.useIsoWeekday) {
+    //     this.props.onWeekChanged(
+    //       previousWeekStartDate.clone().startOf("isoweek")
+    //     );
+    //   } else {
+    //     this.props.onWeekChanged(previousWeekStartDate.clone());
+    //   }
+    // }
     let weekData = this.updateWeekData(previousWeekStartDate);
     this.setState({ startingDate: previousWeekStartDate, ...weekData });
   }
 
   //Set startingDate to the next week
   getNextWeek() {
-    const nextWeekStartDate = this.state.startingDate.clone().add(1, "w");
-    if (this.props.onWeekChanged) {
-      if (this.props.useIsoWeekday) {
-        this.props.onWeekChanged(nextWeekStartDate.clone().startOf("isoweek"));
-      } else {
-        this.props.onWeekChanged(nextWeekStartDate.clone());
-      }
-    }
+    const nextWeekStartDate = this.state.startingDate.clone().add(this.props.numDaysInWeek, "d");
+    console.log(nextWeekStartDate);
+    // if (this.props.onWeekChanged) {
+    //   if (this.props.useIsoWeekday) {
+    //     this.props.onWeekChanged(nextWeekStartDate.clone().startOf("isoweek"));
+    //   } else {
+    //     this.props.onWeekChanged(nextWeekStartDate.clone());
+    //   }
+    // }
     let weekData = this.updateWeekData(nextWeekStartDate);
     this.setState({ startingDate: nextWeekStartDate, ...weekData });
   }
@@ -332,18 +336,19 @@ class CalendarStrip extends Component {
     let datesSelectedForWeek = [];
     let datesCustomStylesForWeek = [];
 
-    for (let i = 0; i < this.numDaysInWeek; i++) {
+    for (let i = 0; i < this.props.numDaysInWeek; i++) {
       let date;
-      if (props.useIsoWeekday) {
-        // isoWeekday starts from Monday
-        date = me.setLocale(startingDate.clone().isoWeekday(i + 1));
-      } else {
-        date = me.setLocale(startingDate.clone().add(i, "days"));
-      }
+      // if (props.useIsoWeekday) {
+      //   // isoWeekday starts from Monday
+      //   date = me.setLocale(startingDate.clone().isoWeekday(i + 1));
+      // } else {
+      date = me.setLocale(startingDate.clone().add(i, "days"));
+      // }
       datesForWeek.push(date);
       datesAllowedForWeek.push(this.isDateAllowed(date, props));
       datesSelectedForWeek.push(this.isDateSelected(date, selectedDate));
       datesCustomStylesForWeek.push(this.getCustomDateStyle(date, props));
+      console.log(date)
     }
     return {
       datesForWeek,
@@ -463,7 +468,7 @@ class CalendarStrip extends Component {
   //Function for reseting animations
   resetAnimation() {
     this.animatedValue = [];
-    for (let i = 0; i < this.numDaysInWeek; i++) {
+    for (let i = 0; i < this.props.numDaysInWeek; i++) {
       this.animatedValue.push(new Animated.Value(0));
     }
   }
@@ -473,7 +478,7 @@ class CalendarStrip extends Component {
   animate() {
     if (this.props.calendarAnimation) {
       let animations = [];
-      for (let i = 0; i < this.numDaysInWeek; i++) {
+      for (let i = 0; i < this.props.numDaysInWeek; i++) {
         animations.push(
           Animated.timing(this.animatedValue[i], {
             toValue: 1,
@@ -500,7 +505,7 @@ class CalendarStrip extends Component {
   // Responsive sizing based on container width.
   onLayout(event) {
     let csWidth = event.nativeEvent.layout.width;
-    let numElements = this.numDaysInWeek;
+    let numElements = this.props.numDaysInWeek;
     if (
       Array.isArray(this.props.leftSelector) &&
       this.props.leftSelector.length > 0
@@ -570,6 +575,7 @@ class CalendarStrip extends Component {
           size={this.state.dayComponentWidth}
           allowDayTextScaling={this.props.shouldAllowFontScaling}
           markedDates={this.props.markedDates}
+          numDaysInWeek={this.props.numDaysInWeek}
         />
       );
       datesRender.push(
