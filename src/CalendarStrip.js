@@ -364,23 +364,26 @@ class CalendarStrip extends Component {
 
   //Handling press on date/selecting date
   onDateSelected(selectedDate) {
-    if (this.state.selectedDate.isBefore(selectedDate)) {
-      let startDate = this.state.selectedDate;
-      const endDate = selectedDate;
-      const range = moment.range(startDate, endDate);
-      const selectedRangeArray = Array.from(range.by('day'));
+    const isInArray = this.state.selectedRange.some((date) => {
+      return date.isSame(selectedDate);
+    });
+    if (isInArray) {
+      const selectedArray = this.state.selectedRange.filter((date) => {
+        return !date.isSame(selectedDate, 'day');
+      });
       this.setState({
         selectedDate,
-        selectedRange: selectedRangeArray,
-        ...this.updateWeekData(this.state.startingDate, selectedDate, selectedRangeArray)
-      })
-    } else {
-      this.setState({
-        selectedDate,
-        selectedRange: [],
-        ...this.updateWeekData(this.state.startingDate, selectedDate, [])
+        selectedRange: selectedArray,
+        ...this.updateWeekData(this.state.startingDate, selectedDate, selectedArray)
       });
       this.props.onDateSelected && this.props.onDateSelected(selectedDate);
+    } else {
+      const selectedArray = [...this.state.selectedRange, selectedDate];
+      this.setState({
+        selectedDate,
+        selectedRange: selectedArray,
+        ...this.updateWeekData(this.state.startingDate, selectedDate, selectedArray)
+      })
     }
   }
 
@@ -450,7 +453,7 @@ class CalendarStrip extends Component {
   }
 
   getDateMarking(day) {
-    const { markedDates } = this.props
+    const { markedDates } = this.props;
     if (markedDates.length === 0) {
       return false
     }
@@ -566,10 +569,9 @@ class CalendarStrip extends Component {
   isSelected = (i) => {
     const isInRange = this.state.selectedRange.some((elemInRange) => {
       return elemInRange.isSame(this.state.datesForWeek[i]);
-    })
-    if (this.state.datesForWeek[i].isSame(this.state.selectedDate, 'day') || isInRange) return true;
-    return false;
-  }
+    });
+    return isInRange;
+  };
 
   render() {
     let datesForWeek = this.state.datesForWeek;
@@ -582,7 +584,6 @@ class CalendarStrip extends Component {
           date={datesForWeek[i]}
           marking={this.getDateMarking(datesForWeek[i])}
           selected={this.isSelected(i)}
-          selectedRange={this.state.selectedRange}
           enabled={enabled}
           showDayName={this.props.showDayName}
           showDayNumber={this.props.showDayNumber}
