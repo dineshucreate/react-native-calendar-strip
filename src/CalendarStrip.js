@@ -7,7 +7,8 @@ import PropTypes from "prop-types";
 import {polyfill} from 'react-lifecycles-compat';
 import { View, Animated, Easing } from "react-native";
 
-import moment from "moment";
+import Moment from "moment";
+import { extendMoment } from 'moment-range';
 
 import CalendarHeader from "./CalendarHeader";
 import CalendarDay from "./CalendarDay";
@@ -18,6 +19,9 @@ import styles from "./Calendar.style.js";
  * Class CalendarStrip that is representing the whole calendar strip and contains CalendarDay elements
  *
  */
+
+const moment = extendMoment(Moment);
+
 class CalendarStrip extends Component {
   static propTypes = {
     style: PropTypes.any,
@@ -121,11 +125,13 @@ class CalendarStrip extends Component {
 
     const startingDate = this.getInitialStartingDate();
     const selectedDate = this.setLocale(moment(this.props.selectedDate));
+    const selectedRange = [];
     const weekData = this.updateWeekData(startingDate, selectedDate);
 
     this.state = {
       startingDate,
       selectedDate,
+      selectedRange,
       ...weekData,
       dayComponentWidth: 0,
       height: 0,
@@ -326,6 +332,7 @@ class CalendarStrip extends Component {
   updateWeekData(
     startingDate,
     selectedDate = this.state.selectedDate,
+    selectedRange = [],
     props = this.props
   ) {
     const me = this;
@@ -344,7 +351,7 @@ class CalendarStrip extends Component {
       // }
       datesForWeek.push(date);
       datesAllowedForWeek.push(this.isDateAllowed(date, props));
-      datesSelectedForWeek.push(this.isDateSelected(date, selectedDate));
+      datesSelectedForWeek.push(this.isDateSelected(date, selectedDate, selectedRange, i));
       datesCustomStylesForWeek.push(this.getCustomDateStyle(date, props));
     }
     return {
@@ -357,11 +364,24 @@ class CalendarStrip extends Component {
 
   //Handling press on date/selecting date
   onDateSelected(selectedDate) {
-    this.setState({
-      selectedDate,
-      ...this.updateWeekData(this.state.startingDate, selectedDate)
-    });
-    this.props.onDateSelected && this.props.onDateSelected(selectedDate);
+    if (this.state.selectedDate.isBefore(selectedDate)) {
+      let startDate = this.state.selectedDate;
+      const endDate = selectedDate;
+      const range = moment.range(startDate, endDate);
+      const selectedRangeArray = Array.from(range.by('day'));
+      this.setState({
+        selectedDate,
+        selectedRange: selectedRangeArray,
+        ...this.updateWeekData(this.state.startingDate, selectedDate, selectedRangeArray)
+      })
+    } else {
+      this.setState({
+        selectedDate,
+        selectedRange: [],
+        ...this.updateWeekData(this.state.startingDate, selectedDate, [])
+      });
+      this.props.onDateSelected && this.props.onDateSelected(selectedDate);
+    }
   }
 
   // Check whether date is allowed
@@ -404,7 +424,10 @@ class CalendarStrip extends Component {
 
   //Function to check if provided date is the same as selected one, hence date is selected
   //using isSame moment query with 'day' param so that it check years, months and day
-  isDateSelected(date, selectedDate = this.state.selectedDate) {
+  isDateSelected(date, selectedDate = this.state.selectedDate, selectedRange, i) {
+    if (selectedRange.length > 0) {
+      return date.isSame(selectedRange[i], "day");
+    }
     return date.isSame(selectedDate, "day");
   }
 
@@ -540,6 +563,14 @@ class CalendarStrip extends Component {
     });
   }
 
+  isSelected = (i) => {
+    const isInRange = this.state.selectedRange.some((elemInRange) => {
+      return elemInRange.isSame(this.state.datesForWeek[i]);
+    })
+    if (this.state.datesForWeek[i].isSame(this.state.selectedDate, 'day') || isInRange) return true;
+    return false;
+  }
+
   render() {
     let datesForWeek = this.state.datesForWeek;
     let datesRender = [];
@@ -550,7 +581,8 @@ class CalendarStrip extends Component {
         <_CalendarDay
           date={datesForWeek[i]}
           marking={this.getDateMarking(datesForWeek[i])}
-          selected={this.state.datesSelectedForWeek[i]}
+          selected={this.isSelected(i)}
+          selectedRange={this.state.selectedRange}
           enabled={enabled}
           showDayName={this.props.showDayName}
           showDayNumber={this.props.showDayNumber}
