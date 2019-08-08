@@ -11,6 +11,7 @@ class CalendarHeader extends Component {
       PropTypes.object,
       PropTypes.number
     ]),
+    selectedRange: PropTypes.array,
     calendarHeaderStyle: PropTypes.oneOfType([
       PropTypes.object,
       PropTypes.number
@@ -58,16 +59,23 @@ class CalendarHeader extends Component {
 
     return `${
       monthFormatting.length > 1 ? firstDay.format(monthFormatting) : ""
-    } ${monthFormatting.length > 1 ? "/" : ""} ${lastDay.format(
+      } ${monthFormatting.length > 1 ? "/" : ""} ${lastDay.format(
       calendarHeaderFormat
     )}`;
   }
 
+  formatRangeToHeader = () => {
+    const sortedArray  = this.props.selectedRange.sort((a, b) => a.valueOf() - b.valueOf());
+    const shorterDisplayArray = [];
+    sortedArray.forEach((date, i) => {
+      if (i < sortedArray.length - 1) return shorterDisplayArray.push(date.format('Do MMM'));
+      return shorterDisplayArray.push(date.format('Do MMM YYYY'));
+    });
+    return shorterDisplayArray.join(', ');
+  };
+
   render() {
-    const headerText = this.formatCalendarHeader(
-      this.props.datesForWeek,
-      this.props.calendarHeaderFormat
-    );
+    const headerText = this.formatRangeToHeader();
     return (
       <View style={this.props.calendarHeaderContainerStyle}>
         <Text
@@ -77,6 +85,7 @@ class CalendarHeader extends Component {
             this.props.calendarHeaderStyle
           ]}
           allowFontScaling={this.props.allowHeaderTextScaling}
+          numberOfLines={1}
         >
           {headerText}
         </Text>

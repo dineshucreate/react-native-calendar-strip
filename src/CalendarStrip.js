@@ -366,7 +366,7 @@ class CalendarStrip extends Component {
   onDateSelected(selectedDate) {
     const isInArray = this.state.selectedRange.some((date) => {
       return date.isSame(selectedDate);
-    });
+    })
     if (isInArray) {
       const selectedArray = this.state.selectedRange.filter((date) => {
         return !date.isSame(selectedDate, 'day');
@@ -436,10 +436,10 @@ class CalendarStrip extends Component {
 
   // Get the currently selected date (Moment JS object)
   getSelectedDate(date) {
-    if (this.state.selectedDate.valueOf() === 0) {
+    if (this.state.selectedDate.valueOf() === 0 || this.state.selectedRange.length === 0) {
       return; // undefined (no date has been selected yet)
-    }
-    return this.state.selectedDate;
+    } else if (this.state.selectedRange.length === 0) return this.state.selectedDate;
+    return this.state.selectedRange;
   }
 
   // Set the selected date.  To clear the currently selected date, pass in 0.
@@ -453,7 +453,7 @@ class CalendarStrip extends Component {
   }
 
   getDateMarking(day) {
-    const { markedDates } = this.props;
+    const { markedDates } = this.props
     if (markedDates.length === 0) {
       return false
     }
@@ -569,9 +569,10 @@ class CalendarStrip extends Component {
   isSelected = (i) => {
     const isInRange = this.state.selectedRange.some((elemInRange) => {
       return elemInRange.isSame(this.state.datesForWeek[i]);
-    });
-    return isInRange;
-  };
+    })
+    if (isInRange) return true;
+    return false;
+  }
 
   render() {
     let datesForWeek = this.state.datesForWeek;
@@ -631,6 +632,7 @@ class CalendarStrip extends Component {
         calendarHeaderStyle={this.props.calendarHeaderStyle}
         datesForWeek={this.state.datesForWeek}
         fontSize={this.state.monthFontSize}
+        selectedRange={this.state.selectedRange}
         allowHeaderTextScaling={this.props.shouldAllowFontScaling}
       />
     );
