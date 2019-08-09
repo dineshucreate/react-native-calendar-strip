@@ -24,6 +24,8 @@ class CalendarDay extends Component {
 
     calendarColor: PropTypes.string,
 
+    dateContainerStyle: PropTypes.any,
+    highlightDateContainerStyle: PropTypes.any,
     dateNameStyle: PropTypes.any,
     dateNumberStyle: PropTypes.any,
     weekendDateNameStyle: PropTypes.any,
@@ -78,25 +80,25 @@ class CalendarDay extends Component {
           duration: this.props.daySelectionAnimation.duration || 300,
           create: {
             type:
-              this.props.daySelectionAnimation.animType ||
-              LayoutAnimation.Types.easeInEaseOut,
+            this.props.daySelectionAnimation.animType ||
+            LayoutAnimation.Types.easeInEaseOut,
             property:
-              this.props.daySelectionAnimation.animProperty ||
-              LayoutAnimation.Properties.opacity
+            this.props.daySelectionAnimation.animProperty ||
+            LayoutAnimation.Properties.opacity
           },
           update: {
             type:
-              this.props.daySelectionAnimation.animUpdateType ||
-              LayoutAnimation.Types.easeInEaseOut,
+            this.props.daySelectionAnimation.animUpdateType ||
+            LayoutAnimation.Types.easeInEaseOut,
             springDamping: this.props.daySelectionAnimation.animSpringDamping
           },
           delete: {
             type:
-              this.props.daySelectionAnimation.animType ||
-              LayoutAnimation.Types.easeInEaseOut,
+            this.props.daySelectionAnimation.animType ||
+            LayoutAnimation.Types.easeInEaseOut,
             property:
-              this.props.daySelectionAnimation.animProperty ||
-              LayoutAnimation.Properties.opacity
+            this.props.daySelectionAnimation.animProperty ||
+            LayoutAnimation.Properties.opacity
           }
         };
         LayoutAnimation.configureNext(configurableAnimation);
@@ -139,17 +141,17 @@ class CalendarDay extends Component {
       validDots = marking.dots
         .filter(d => (d && d.color))
         .map((dot, index) => {
-        return (
-          <View
-            key={dot.key ? dot.key : index}
-            style={[
-              baseDotStyle,
-              { backgroundColor: marking.selected && dot.selectedDotColor ? dot.selectedDotColor : dot.color },
-              markedDatesStyle
-            ]}
-          />
-        );
-      });
+          return (
+            <View
+              key={dot.key ? dot.key : index}
+              style={[
+                baseDotStyle,
+                { backgroundColor: marking.selected && dot.selectedDotColor ? dot.selectedDotColor : dot.color },
+                markedDatesStyle
+              ]}
+            />
+          );
+        });
       return (
         <View style={styles.dotsContainer}>
           {validDots}
@@ -164,6 +166,7 @@ class CalendarDay extends Component {
     // Defaults for disabled state
     let dateNameStyle = [styles.dateName, this.props.enabled ? this.props.dateNameStyle : this.props.disabledDateNameStyle];
     let dateNumberStyle = [styles.dateNumber, this.props.enabled ? this.props.dateNumberStyle : this.props.disabledDateNumberStyle];
+    let dateContainerStyle = [styles.dateContainer, this.props.dateContainerStyle];
     let dateViewStyle = this.props.enabled
       ? [{ backgroundColor: "transparent" }]
       : [{ opacity: this.props.disabledDateOpacity }];
@@ -196,6 +199,7 @@ class CalendarDay extends Component {
 
       dateNameStyle = [styles.dateName, this.props.dateNameStyle];
       dateNumberStyle = [styles.dateNumber, this.props.dateNumberStyle];
+      dateContainerStyle = [styles.dateContainer, this.props.dateContainerStyle];
       if (
         this.props.styleWeekend &&
         (this.props.date.isoWeekday() === 6 ||
@@ -216,6 +220,10 @@ class CalendarDay extends Component {
           styles.dateNumber,
           this.props.highlightDateNumberStyle
         ];
+        dateContainerStyle = [
+          styles.dateContainer,
+          this.props.highlightDateContainerStyle
+        ]
       }
     }
 
@@ -226,7 +234,6 @@ class CalendarDay extends Component {
       padding: this.state.containerPadding
     };
 
-
     return (
       <TouchableOpacity
         onPress={this.props.onDateSelected.bind(this, this.props.date)}
@@ -236,7 +243,8 @@ class CalendarDay extends Component {
           style={[
             styles.dateContainer,
             responsiveDateContainerStyle,
-            dateViewStyle
+            dateViewStyle,
+            dateContainerStyle,
           ]}
         >
           {this.props.showDayName && (
@@ -251,8 +259,8 @@ class CalendarDay extends Component {
             <View>
               <Text
                 style={[
-                    { fontSize: this.state.dateNumberFontSize },
-                    dateNumberStyle
+                  { fontSize: this.state.dateNumberFontSize },
+                  dateNumberStyle
                 ]}
                 allowFontScaling={this.props.allowDayTextScaling}
               >
