@@ -68,7 +68,11 @@ class CalendarHeader extends Component {
     const sortedArray  = this.props.selectedRange.sort((a, b) => a.valueOf() - b.valueOf());
     const shorterDisplayArray = [];
     sortedArray.forEach((date, i) => {
-      if (i < sortedArray.length - 1) return shorterDisplayArray.push(date.format('Do MMM'));
+      if (i < sortedArray.length - 1) {
+        if (date.isSame(sortedArray[i+1], 'year')) {
+          return shorterDisplayArray.push(date.format('Do MMM'));
+        }
+      }
       return shorterDisplayArray.push(date.format('Do MMM YYYY'));
     });
     return shorterDisplayArray.join(', ');
