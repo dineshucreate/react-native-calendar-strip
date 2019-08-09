@@ -11,6 +11,7 @@ import Moment from "moment";
 import { extendMoment } from 'moment-range';
 
 import CalendarHeader from "./CalendarHeader";
+import CalendarSelectedDates from './CalendarSelectedDates';
 import CalendarDay from "./CalendarDay";
 import WeekSelector from "./WeekSelector";
 import styles from "./Calendar.style.js";
@@ -641,6 +642,18 @@ class CalendarStrip extends Component {
       />
     );
 
+    let calendarSelectedDates = (
+      <CalendarSelectedDates
+        calendarHeaderFormat={this.props.calendarHeaderFormat}
+        calendarHeaderContainerStyle={this.props.calendarHeaderContainerStyle}
+        calendarHeaderStyle={this.props.calendarHeaderStyle}
+        datesForWeek={this.state.datesForWeek}
+        fontSize={this.state.monthFontSize}
+        selectedRange={this.state.selectedRange}
+        allowHeaderTextScaling={this.props.shouldAllowFontScaling}
+      />
+    );
+
     // calendarHeader renders above or below of the dates & left/right selectors if dates are shown.
     // However if dates are hidden, the header shows between the left/right selectors.
     return (
@@ -655,6 +668,7 @@ class CalendarStrip extends Component {
           style={[this.props.innerStyle, { height: this.state.height }]}
           onLayout={this.onLayout.bind(this)}
         >
+          {this.props.showDate && calendarSelectedDates}
           {this.props.showDate && this.props.calendarHeaderPosition === 'above' && calendarHeader}
 
           <View style={styles.datesStrip}>
