@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
 import { Text, View } from "react-native";
+import Moment from "moment";
 
 import styles from "./Calendar.style.js";
 
@@ -11,7 +12,7 @@ class CalendarHeader extends Component {
       PropTypes.object,
       PropTypes.number
     ]),
-    calendarHeaderStyle: PropTypes.oneOfType([
+    calendarSelectedDatesStyle: PropTypes.oneOfType([
       PropTypes.object,
       PropTypes.number
     ]),
@@ -23,12 +24,53 @@ class CalendarHeader extends Component {
     return JSON.stringify(this.props) !== JSON.stringify(nextProps);
   }
 
+  //Function that formats the calendar header
+  //It also formats the month section if the week is in between months
+  formatCalendarHeader(datesForWeek, calendarHeaderFormat) {
+    if (!datesForWeek || datesForWeek.length === 0) {
+      return "";
+    }
+
+    let firstDay = datesForWeek[0];
+    let lastDay = datesForWeek[datesForWeek.length - 1];
+    let monthFormatting = "";
+    //Parsing the month part of the user defined formating
+    if ((calendarHeaderFormat.match(/Mo/g) || []).length > 0) {
+      monthFormatting = "Mo";
+    } else {
+      if ((calendarHeaderFormat.match(/M/g) || []).length > 0) {
+        for (
+          let i = (calendarHeaderFormat.match(/M/g) || []).length;
+          i > 0;
+          i--
+        ) {
+          monthFormatting += "M";
+        }
+      }
+    }
+
+    if (firstDay.month() === lastDay.month()) {
+      return firstDay.format(calendarHeaderFormat);
+    } else if (firstDay.year() !== lastDay.year()) {
+      return `${firstDay.format(calendarHeaderFormat)} / ${lastDay.format(
+        calendarHeaderFormat
+      )}`;
+    }
+
+    return `${
+      monthFormatting.length > 1 ? firstDay.format(monthFormatting) : ""
+      } ${monthFormatting.length > 1 ? "/" : ""} ${lastDay.format(
+      calendarHeaderFormat
+    )}`;
+  }
+
   formatRangeToHeader = () => {
     const sortedArray  = this.props.selectedRange.sort((a, b) => a.valueOf() - b.valueOf());
     const shorterDisplayArray = [];
     sortedArray.forEach((date, i) => {
       if (i < sortedArray.length - 1) {
         if (date.isSame(sortedArray[i+1], 'year')) {
+          console.log(date, sortedArray[i+1])
           return shorterDisplayArray.push(date.format('Do MMM'));
         }
       }
@@ -45,7 +87,7 @@ class CalendarHeader extends Component {
           style={[
             styles.calendarHeader,
             { fontSize: this.props.fontSize },
-            this.props.calendarHeaderStyle
+            this.props.calendarSelectedDatesStyle
           ]}
           allowFontScaling={this.props.allowHeaderTextScaling}
           numberOfLines={1}

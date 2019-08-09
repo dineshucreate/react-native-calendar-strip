@@ -63,6 +63,7 @@ class CalendarStrip extends Component {
 
     calendarHeaderContainerStyle: PropTypes.any,
     calendarHeaderStyle: PropTypes.any,
+    calendarSelectedDatesStyle: PropTypes.any,
     calendarHeaderFormat: PropTypes.string,
     calendarHeaderPosition: PropTypes.oneOf(['above', 'below']),
 
@@ -646,7 +647,7 @@ class CalendarStrip extends Component {
       <CalendarSelectedDates
         calendarHeaderFormat={this.props.calendarHeaderFormat}
         calendarHeaderContainerStyle={this.props.calendarHeaderContainerStyle}
-        calendarHeaderStyle={this.props.calendarHeaderStyle}
+        calendarSelectedDatesStyle={this.props.calendarSelectedDatesStyle}
         datesForWeek={this.state.datesForWeek}
         fontSize={this.state.monthFontSize}
         selectedRange={this.state.selectedRange}
