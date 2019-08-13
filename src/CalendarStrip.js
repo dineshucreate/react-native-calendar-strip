@@ -446,6 +446,9 @@ class CalendarStrip extends Component {
     return this.state.selectedRange;
   }
 
+  getSelectedDates(){
+    return this.state.selectedRange;
+  }
   // Set the selected date.  To clear the currently selected date, pass in 0.
   setSelectedDate(date) {
     let mDate = moment(date);
