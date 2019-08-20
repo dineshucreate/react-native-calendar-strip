@@ -156,6 +156,7 @@ class CalendarStrip extends Component {
 
   componentDidMount() {
     // Animate showing of CalendarDay elements
+    this.multipleDateSelect(this.props.selectedDatesList);
     this.animate();
   }
 
@@ -369,7 +370,7 @@ class CalendarStrip extends Component {
   //Handling press on date/selecting date
   onDateSelected(selectedDate) {
     const isInArray = this.state.selectedRange.some((date) => {
-      return date.isSame(selectedDate);
+      return date.isSame(selectedDate, 'day');
     })
     if (isInArray) {
       const selectedArray = this.state.selectedRange.filter((date) => {
@@ -389,6 +390,13 @@ class CalendarStrip extends Component {
         ...this.updateWeekData(this.state.startingDate, selectedDate, selectedArray)
       })
     }
+  }
+
+  multipleDateSelect(selectedDateList){
+    this.updateWeekData(this.state.startingDate, selectedDateList[0], selectedDateList)
+    this.setState({
+      selectedRange: selectedDateList
+    });
   }
 
   // Check whether date is allowed
@@ -447,7 +455,11 @@ class CalendarStrip extends Component {
   }
 
   getSelectedDates(){
+    if(this.state.selectedRange)
     return this.state.selectedRange;
+    else
+    return;
+    // return this.state.selectedRange;
   }
   // Set the selected date.  To clear the currently selected date, pass in 0.
   setSelectedDate(date) {
@@ -575,7 +587,7 @@ class CalendarStrip extends Component {
 
   isSelected = (i) => {
     const isInRange = this.state.selectedRange.some((elemInRange) => {
-      return elemInRange.isSame(this.state.datesForWeek[i]);
+      return elemInRange.isSame(this.state.datesForWeek[i],'day');
     })
     if (isInRange) return true;
     return false;
@@ -672,7 +684,7 @@ class CalendarStrip extends Component {
           style={[this.props.innerStyle, { height: this.state.height }]}
           onLayout={this.onLayout.bind(this)}
         >
-          {this.props.showDate && calendarSelectedDates}
+          {/* {this.props.showDate && calendarSelectedDates} */}
           {this.props.showDate && this.props.calendarHeaderPosition === 'above' && calendarHeader}
 
           <View style={styles.datesStrip}>
