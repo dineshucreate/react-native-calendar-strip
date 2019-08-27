@@ -14,6 +14,7 @@ class CalendarHeader extends Component {
     ]),
     calendarSelectedDatesStyle: PropTypes.oneOfType([
       PropTypes.object,
+      PropTypes.array,
       PropTypes.number
     ]),
     datesForWeek: PropTypes.array.isRequired,
@@ -70,7 +71,6 @@ class CalendarHeader extends Component {
     sortedArray.forEach((date, i) => {
       if (i < sortedArray.length - 1) {
         if (date.isSame(sortedArray[i+1], 'year')) {
-          console.log(date, sortedArray[i+1])
           return shorterDisplayArray.push(date.format('Do MMM'));
         }
       }

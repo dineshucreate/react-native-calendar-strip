@@ -7,15 +7,19 @@ import { StyleSheet } from "react-native";
 export default StyleSheet.create({
   //CALENDAR STYLES
   calendarContainer: {
-    overflow: "hidden"
+    // overflow: "hidden"
+    flex:1,
   },
   datesStrip: {
     flexDirection: "row",
     flex: 1,
+    marginVertical: 25,
+    alignItems: 'center',
     justifyContent: "space-between"
   },
   calendarDates: {
     flex: 1,
+    marginTop: 20,
     flexDirection: "row",
     justifyContent: "center",
     alignItems: "center"

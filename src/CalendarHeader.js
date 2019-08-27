@@ -12,8 +12,9 @@ class CalendarHeader extends Component {
       PropTypes.number
     ]),
     calendarHeaderStyle: PropTypes.oneOfType([
+      PropTypes.array,
       PropTypes.object,
-      PropTypes.number
+      PropTypes.number,
     ]),
     datesForWeek: PropTypes.array.isRequired,
     allowHeaderTextScaling: PropTypes.bool
