@@ -12,6 +12,7 @@ class CalendarHeader extends Component {
       PropTypes.number
     ]),
     calendarHeaderStyle: PropTypes.oneOfType([
+      PropTypes.array,
       PropTypes.object,
       PropTypes.number
     ]),
