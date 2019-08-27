@@ -687,33 +687,9 @@ class CalendarStrip extends Component {
           onLayout={this.onLayout.bind(this)}
         >
           {this.props.showDate && calendarSelectedDates}
-<<<<<<< HEAD
           {this.props.showDate ? (
             <View style={styles.calendarDates}>{datesRender}</View>
           ) : (
-=======
-          {this.props.showDate && this.props.calendarHeaderPosition === 'above' && calendarHeader}
-
-          <View style={styles.datesStrip}>
-            <WeekSelector
-              controlDate={this.props.minDate}
-              iconComponent={this.props.leftSelector}
-              iconContainerStyle={this.props.iconContainer}
-              iconInstanceStyle={this.props.iconLeftStyle}
-              iconStyle={this.props.iconStyle}
-              imageSource={this.props.iconLeft}
-              onPress={this.getPreviousWeek}
-              weekEndDate={
-                this.state.datesForWeek[this.state.datesForWeek.length - 1]
-              }
-              weekStartDate={this.state.datesForWeek[0]}
-              size={this.state.selectorSize}
-            />
-
-            {this.props.showDate ? (
-              <View style={styles.calendarDates}>{datesRender}</View>
-            ) : (
->>>>>>> ff267b5abcac56a8db4bc05355ac1eabf2cf2aaf
               calendarHeader
             )}
         </View>
