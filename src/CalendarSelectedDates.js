@@ -14,6 +14,7 @@ class CalendarHeader extends Component {
     ]),
     calendarSelectedDatesStyle: PropTypes.oneOfType([
       PropTypes.object,
+      PropTypes.array,
       PropTypes.number
     ]),
     datesForWeek: PropTypes.array.isRequired,
