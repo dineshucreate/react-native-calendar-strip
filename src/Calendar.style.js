@@ -52,7 +52,7 @@ export default StyleSheet.create({
     textAlign: "center"
   },
   dateNumber: {
-    fontWeight: "bold",
+//     fontWeight: "bold",
     textAlign: "center"
   },
   weekendDateNumber: {
